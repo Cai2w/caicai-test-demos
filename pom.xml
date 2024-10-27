@@ -33,4 +33,15 @@
         <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- netty 框架 -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.51.Final</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
