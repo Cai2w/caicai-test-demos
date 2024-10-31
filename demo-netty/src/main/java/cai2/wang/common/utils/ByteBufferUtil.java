@@ -1,4 +1,4 @@
-package cai2.wang.utils;
+package cai2.wang.common.utils;
 
 import io.netty.util.internal.StringUtil;
 

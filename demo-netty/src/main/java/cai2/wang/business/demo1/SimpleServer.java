@@ -14,6 +14,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 public class SimpleServer {
 
     public static void main(String[] args) throws IOException {
@@ -30,7 +32,7 @@ public class SimpleServer {
         //给key设置感兴趣的事件
         selectionKey.interestOps(SelectionKey.OP_ACCEPT);
         //绑定端口号
-        serverSocketChannel.bind(new InetSocketAddress(9999));
+        serverSocketChannel.bind(new InetSocketAddress(SERVER_PORT));
         //然后开始接受连接,处理事件,整个处理都在一个死循环之中
         while (true) {
             //当没有事件到来的时候，这里是阻塞的,有事件的时候会自动运行

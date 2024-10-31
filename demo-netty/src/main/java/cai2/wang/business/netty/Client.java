@@ -8,6 +8,8 @@ import io.netty.handler.codec.string.StringEncoder;
 
 import java.net.InetSocketAddress;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 /**
  * @author wangpeixu
  * @date 2024/10/27 18:30
@@ -23,7 +25,7 @@ public class Client {
                         nioSocketChannel.pipeline().addLast(new StringEncoder());
                     }
                 })
-                .connect(new InetSocketAddress("localhost", 8080))
+                .connect(new InetSocketAddress("localhost", SERVER_PORT))
                 .sync()
                 .channel()
                 .writeAndFlush("hello world");

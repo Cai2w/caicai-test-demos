@@ -8,6 +8,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 /**
  * @author wangpeixu
  * @date 2024/10/27 18:26
@@ -29,6 +31,6 @@ public class Server {
                         });
                     }
                 })
-                .bind(8080);
+                .bind(SERVER_PORT);
     }
 }

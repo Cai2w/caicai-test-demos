@@ -1,6 +1,6 @@
 package cai2.wang.business.network;
 
-import cai2.wang.utils.ByteBufferUtil;
+import cai2.wang.common.utils.ByteBufferUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,6 +9,8 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 public class Server {
     public static void main(String[] args) {
         // 创建缓冲区
@@ -16,7 +18,7 @@ public class Server {
         // 获得服务器通道
         try(ServerSocketChannel server = ServerSocketChannel.open()) {
             // 为服务器通道绑定端口
-            server.bind(new InetSocketAddress(8089));
+            server.bind(new InetSocketAddress(SERVER_PORT));
             // 用户存放连接的集合
             ArrayList<SocketChannel> channels = new ArrayList<>();
             // 循环接收连接

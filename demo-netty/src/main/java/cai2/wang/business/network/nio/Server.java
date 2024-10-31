@@ -1,6 +1,6 @@
 package cai2.wang.business.network.nio;
 
-import cai2.wang.utils.ByteBufferUtil;
+import cai2.wang.common.utils.ByteBufferUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,6 +10,8 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 public class Server {
  public static void main(String[] args) {
         // 创建缓冲区
@@ -17,7 +19,7 @@ public class Server {
         // 获得服务器通道
         try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
             // 为服务器通道绑定端口
-            serverSocketChannel.bind(new InetSocketAddress(8089));
+            serverSocketChannel.bind(new InetSocketAddress(SERVER_PORT));
             // 将服务端连接通道设置为非阻塞模式，此种状模式，server.accept()在没有客户端连接请求建立时，返回值是null此时若没有连接，accept会返回null
             serverSocketChannel.configureBlocking(false);
             // 用户存放连接的集合

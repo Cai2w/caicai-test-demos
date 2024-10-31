@@ -13,6 +13,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import static cai2.wang.common.constant.SystemConstant.SERVER_PORT;
+
 public class SimpleClient {
     public static void main(String[] args) throws IOException, InterruptedException {
         Logger logger = LoggerFactory.getLogger(SimpleClient.class);
@@ -28,7 +30,7 @@ public class SimpleClient {
         //设置事件
         selectionKey.interestOps(SelectionKey.OP_CONNECT);
         //客户端的channel去连接服务器
-        socketChannel.connect(new InetSocketAddress(9999));
+        socketChannel.connect(new InetSocketAddress(SERVER_PORT));
         //开始轮询事件
         while (true) {
             //无事件则阻塞
