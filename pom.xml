@@ -24,13 +24,13 @@
 
     <!--项目中依赖版本统一管理-->
     <properties>
-        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mysql.version>8.2.0</mysql.version>
         <projectlombok.version>1.18.26</projectlombok.version>
         <springboot.version>2.7.17</springboot.version>
         <okhttp.version>4.12.0</okhttp.version>
+        <slf4j.version>1.7.13</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +40,20 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>4.1.51.Final</version>
+            </dependency>
+
+            <!--只有slf4j-api依赖-->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <!-- 注意，若无type为jar则报错-->
+                <type>jar</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
