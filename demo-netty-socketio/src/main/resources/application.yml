@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: netty_io
+# 端口设置
+server:
+  port: 9999
