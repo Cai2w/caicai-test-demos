@@ -3,7 +3,7 @@
 <template>
   <header>
 
-    <button @click="downloadNOProxy">直接下载</button>
+    <button @click="connect">连接</button>
     <button @click="downloadProxy">代理下载</button>
   </header>
 
@@ -14,13 +14,23 @@
 <script >
 
 import axios from "axios";
-
+import * as Y from 'yjs';
+import { WebsocketProvider } from 'y-websocket';
 export default {
   name: 'App',
   components: {},
   methods:{
-    downloadProxy(){
+    connect(){
+      const doc = new Y.Doc()
+      const wsProvider = new WebsocketProvider(
+          'ws://127.0.0.1:1234',
+          'my-roomname',
+          doc
+      )
 
+      wsProvider.on('status', event => {
+        console.log(event.status) // logs "connected" or "disconnected"
+      })
     },
     downloadNOProxy(){
     }
