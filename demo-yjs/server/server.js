@@ -1,24 +1,31 @@
-const http = require('http');
-const express = require('express');
-const WebSocket = require('ws');
-const { setupWSConnection } = require('y-websocket/bin/utils');
+#!/usr/bin/env node
 
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const WebSocket = require('ws')
+const http = require('http')
+const number = require('lib0/number')
+const wss = new WebSocket.Server({ noServer: true })
+const setupWSConnection = require('y-websocket/bin/utils').setupWSConnection
 
-// 设置WebSocket连接和协同功能
-wss.on('connection', (ws, req) => {
-    const docName = req.url.slice(1).split('?')[0];// 从URL中提取文档名称
-    console.log(`New connection to ${docName}`);
-    setupWSConnection(ws, req, {
-        docName
-    });
-});
+const host = process.env.HOST || 'localhost'
+const port = number.parseInt(process.env.PORT || '1234')
 
-// 设置服务器端口号
-const port = process.env.PORT || 1234;
+const server = http.createServer((_request, response) => {
+    response.writeHead(200, { 'Content-Type': 'text/plain' })
+    response.end('okay')
+})
 
-server.listen(port, () => {
-    console.log(`WebSocket Server is running on port ${port}`);
-});
+wss.on('connection', setupWSConnection)
+
+server.on('upgrade', (request, socket, head) => {
+    // You may check auth of request here..
+    // Call `wss.HandleUpgrade` *after* you checked whether the client has access
+    // (e.g. by checking cookies, or url parameters).
+    // See https://github.com/websockets/ws#client-authentication
+    wss.handleUpgrade(request, socket, head, /** @param {any} ws */ ws => {
+        wss.emit('connection', ws, request)
+    })
+})
+
+server.listen(port, host, () => {
+    console.log(`running at '${host}' on port ${port}`)
+})
