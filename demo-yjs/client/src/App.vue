@@ -4,7 +4,7 @@
   <header>
 
     <button @click="connect">连接</button>
-    <button @click="downloadProxy">代理下载</button>
+    <button @click="mapTest">Map测试</button>
   </header>
 
   <main>
@@ -21,18 +21,46 @@ export default {
   components: {},
   methods:{
     connect(){
-      const doc = new Y.Doc()
+      const doc = new Y.Doc();
       const wsProvider = new WebsocketProvider(
-          'ws://127.0.0.1:1234',
+          'ws://127.0.0.1:1234?token=VALID_TOKEN',
           'my-roomname',
           doc
-      )
+      );
 
-      wsProvider.on('status', event => {
-        console.log(event.status) // logs "connected" or "disconnected"
-      })
+      let retryCount = 0;
+      const maxRetries = 3;
+
+      // 监听 WebSocket 关闭事件以获取关闭代码
+      wsProvider.on('connection-close', (event) => {
+        const code = event.code;
+        const reason = event.reason;
+        alert(`连接关闭 code: ${code}, reason: ${reason}`);
+        console.log(`Connection closed with code: ${code}, reason: ${reason}`);
+
+        if (code === 4001) {
+          console.error('Token missing, not attempting to reconnect.');
+          wsProvider.disconnect();
+        } else if (code === 4002) {
+          console.error('Invalid token, not attempting to reconnect.');
+          wsProvider.disconnect();
+        }
+
+        // if (retryCount < maxRetries) {
+        //   retryCount++;
+        //   console.log(`Retrying connection attempt ${retryCount}...`);
+        //   setTimeout(() => {
+        //     wsProvider.connect();
+        //   }, 5000); // Retry after 5 seconds
+        // } else {
+        //   console.error('Max retries reached, not attempting to reconnect.');
+        //   wsProvider.disconnect();
+        // }
+      });
+
     },
-    downloadNOProxy(){
+    mapTest(){
+
     }
   }
 }
