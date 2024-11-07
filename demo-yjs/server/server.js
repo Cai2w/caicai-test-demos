@@ -10,8 +10,8 @@ const host = process.env.HOST || 'localhost'
 const port = number.parseInt(process.env.PORT || '1234')
 
 const server = http.createServer((_request, response) => {
-    response.writeHead(200, { 'Content-Type': 'text/plain' })
-    response.end('okay')
+    response.writeHead(200, { 'Content-Type': 'application/json' })
+    response.end(JSON.stringify({ status: 'ok' }))
 })
 
 wss.on('connection', setupWSConnection)
