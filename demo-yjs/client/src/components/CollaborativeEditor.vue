@@ -126,6 +126,7 @@ export default {
           this.ymap = this.doc.getMap('canvas')
           // 监听 Yjs 数据的变化
           this.ymap.observe(({ transaction, changes }) => {
+            console.log('收到Yjs数据变化', transaction, changes);
             if (!transaction.origin) return; // 没有 origin 表示的是本地发起
             changes.keys.forEach((change, key) => {
               console.log(change, key);
@@ -216,6 +217,11 @@ export default {
         case 'addNode':
           lf.addNode(value);  // 添加节点到 LogicFlow
           break;
+        case "nodeMove":
+          let { x, y, id } = value;
+          console.log(x, y, id );
+          lf.graphModel.moveNode2Coordinate(id, x, y, true);
+          break;
         default:
           break;
       }
@@ -227,6 +233,12 @@ export default {
       grid: true,
     });
     this.lf.render();
+    this.lf.on("node:drag", ({ data, e }) => {
+      this.doc.transact(() => {
+        let { x, y, id } = data;
+        this.ymap.set("nodeMove", { x, y, id });
+      });
+    });
   },
 };
 </script>
