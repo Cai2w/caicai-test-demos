@@ -109,6 +109,9 @@ export default {
           this.room,
           this.doc
       )
+      this.doc.on('update', (update, origin) => {
+        console.log('收到更新', update, origin);
+      })
       // 连接状态
       this.provider.on('status', ({ status }) => {
         if (status === 'connected') {
@@ -121,6 +124,16 @@ export default {
           this.userName = this.provider.awareness.getLocalState().user.name;
           // 初始化map
           this.ymap = this.doc.getMap('canvas')
+          // 监听 Yjs 数据的变化
+          this.ymap.observe(({ transaction, changes }) => {
+            if (!transaction.origin) return; // 没有 origin 表示的是本地发起
+            changes.keys.forEach((change, key) => {
+              console.log(change, key);
+              // 直接调用 YjsHandle 方法
+              const value = this.ymap.get(key)
+              this.YjsHandle(this.lf, { change, key, value });
+            });
+          });
         } else if (status === 'disconnected') {
           ElMessage.error('已断开与WebSocket的连接')
           this.userName = ''
@@ -177,6 +190,15 @@ export default {
 
       this.visible = false;
       this.lf.addNode(node); // 直接调用 addNode 方法
+      if (!this.provider || !this.doc) {
+        ElMessage.warning('请先加入房间,否则数据无法同步')
+        return;
+      }
+      // 使用事务来避免事件触发时数据冲突
+      this.doc.transact(() => {
+        // 更新 Yjs 数据
+        this.ymap.set("addNode", node);
+      });
 
       // 重置表单
       this.form = {
@@ -187,6 +209,17 @@ export default {
         text: '',
       }
     },
+    // 在当前组件内直接定义 YjsHandle 方法
+    YjsHandle(lf, { change, key, value }) {
+      console.log('YjsHandle', change, key, value);
+      switch (key) {
+        case 'addNode':
+          lf.addNode(value);  // 添加节点到 LogicFlow
+          break;
+        default:
+          break;
+      }
+    }
   },
   mounted() {
     this.lf = new LogicFlow({
