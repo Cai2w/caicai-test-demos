@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@logicflow/core": "^2.0.7",
     "element-plus": "^2.8.7",
     "vue": "^3.4.29",
     "y-websocket": "^2.0.4",
