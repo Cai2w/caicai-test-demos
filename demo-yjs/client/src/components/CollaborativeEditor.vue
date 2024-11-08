@@ -233,6 +233,7 @@ export default {
       grid: true,
     });
     this.lf.render();
+    // 优化：当画布上的元素发生变化时会触发history:change事件，可以统一处理。
     this.lf.on("node:drag", ({ data, e }) => {
       this.doc.transact(() => {
         let { x, y, id } = data;
