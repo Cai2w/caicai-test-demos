@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-
+require('dotenv').config();
 const WebSocket = require('ws');
 const http = require('http');
 const number = require('lib0/number');
 const wss = new WebSocket.Server({ noServer: true });
-const setupWSConnection = require('y-websocket/bin/utils').setupWSConnection;
+const wsUtils = require('y-websocket/bin/utils');
 
 const host = process.env.HOST || 'localhost';
 const port = number.parseInt(process.env.PORT || '1234');
@@ -29,7 +29,9 @@ wss.on('connection', (ws, req) => {
         return;
     }
 
-    setupWSConnection(ws, req);
+    wsUtils.setupWSConnection(ws, req);
+    var persistence = wsUtils.getPersistence();
+    console.log("持久化：" + persistence);
 
     ws.on("close", (conn) => {
         console.log(conn);
