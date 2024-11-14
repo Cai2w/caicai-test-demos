@@ -16,25 +16,21 @@ const server = http.createServer((_request, response) => {
 
 wss.on('connection', (ws, req) => {
     console.log('收到websocket连接请求...');
-    const urlParams = new URL(req.url, `http://${req.headers.host}`);
-    let token = urlParams.searchParams.get('token');
+    // 从WebsocketProvider的params中获取token
+    const token = req.url.split('?')[1].split('=')[1];
+    console.log('Received token:', token);
     if (!token) {
         ws.close(4001, 'Missing token');
         return;
     }
-    token = token.includes('/') ? token.split('/')[0] : token;
-    console.log('Received token:', token);
     if (!verifyToken(token)) {
         ws.close(4002, 'Invalid token');
         return;
     }
 
     wsUtils.setupWSConnection(ws, req);
-    var persistence = wsUtils.getPersistence();
-    console.log("持久化：" + persistence);
 
     ws.on("close", (conn) => {
-        console.log(conn);
         console.log("yjs 用户关闭连接");
     });
 });

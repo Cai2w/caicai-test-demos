@@ -105,9 +105,14 @@ export default {
       // 加入房间
       this.doc = new Y.Doc();
       this.provider = new WebsocketProvider(
-          `ws://101.6.219.33:1234?token=${this.token}`,
+          `ws://localhost:1234`,
           this.room,
-          this.doc
+          this.doc,
+          {
+            params: {
+              token: this.token,
+            }
+          }
       )
       this.doc.on('update', (update, origin) => {
         console.log('收到更新', update, origin);
