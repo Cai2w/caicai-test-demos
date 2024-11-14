@@ -15,6 +15,7 @@
             clearable
         />
         <el-button type="primary" @click="joinRoom">加入房间</el-button>
+        <el-button @click="leaveRoom" type="danger">离开房间</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -97,6 +98,23 @@ export default {
     };
   },
   methods: {
+    leaveRoom() {
+      if (this.provider) {
+        // 清除 Yjs 数据
+        this.doc.destroy();
+        // 断开与 WebSocket 的连接
+        this.provider.disconnect();
+        ElMessage.success('成功离开房间');
+      }
+
+      // 重置所有相关的状态
+      // this.room = '';
+      // this.userName = '';
+      // this.token = '';
+      // this.users = [];
+      // this.ymap = null;
+      // this.lf.clear();
+    },
     joinRoom() {
       if (!this.room) {
         ElMessage.error('请输入房间号')
