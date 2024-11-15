@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const http = require('http');
 const number = require('lib0/number');
 const wss = new WebSocket.Server({ noServer: true });
-const wsUtils = require('y-websocket/bin/utils');
+const wsUtils = require('./utils');
 
 const host = process.env.HOST || 'localhost';
 const port = number.parseInt(process.env.PORT || '1234');
