@@ -43,7 +43,10 @@ if (typeof persistenceDir === 'string') {
                 ldb.storeUpdate(docName, update)
             })
         },
-        writeState: async (_docName, _ydoc) => {}
+        writeState: async (_docName, _ydoc) => {},
+        clearDoc: async (docName) => {
+            await ldb.clearDocument(docName)
+        }
     }
 }
 
@@ -222,6 +225,7 @@ const closeConn = (doc, conn) => {
         doc.conns.delete(conn)
         awarenessProtocol.removeAwarenessStates(doc.awareness, Array.from(controlledIds), null)
         if (doc.conns.size === 0 && persistence !== null) {
+            persistence.clearDoc(doc.name)
             // if persisted, we store state and destroy ydocument
             persistence.writeState(doc.name, doc).then(() => {
                 doc.destroy()
