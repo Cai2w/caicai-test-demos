@@ -80,12 +80,13 @@ export default {
   name: 'CollaborativeEditor',
   data() {
     return {
-      room: 'test',
+      room: 'test456',
       userName: '',
-      token: 'VALID_TOKEN',
+      token: '50982a61f9734880876dfce936ebe5c7',
       doc: null,
       provider: null,
       ymap: null,
+      historicalMap: new Map(),
       users: [],
       visible: false,
       form: {
@@ -123,7 +124,7 @@ export default {
       // 加入房间
       this.doc = new Y.Doc();
       this.provider = new WebsocketProvider(
-          `ws://localhost:1234`,
+          `ws://101.6.219.33:1234`,
           this.room,
           this.doc,
           {
@@ -132,32 +133,67 @@ export default {
             }
           }
       )
-      this.doc.on('update', (update, origin) => {
-        console.log('收到更新', update, origin);
-      })
       // 连接状态
       this.provider.on('status', ({ status }) => {
         if (status === 'connected') {
           ElMessage.success('已连接到WebSocket')
+          this.isProcessingHistory = false; // 标记是否正在处理历史数据
+          this.provider.on('sync', (isSynced) => {
+            if (isSynced && !this.isProcessingHistory) {
+              this.isProcessingHistory = true;
+              this.ymap = this.doc.getMap('canvas');
+              // 处理历史数据
+              this.doc.transact(() => {
+                const tempData = new Map();
+                this.ymap.forEach((value, key) => {
+                  tempData.set(key, value);
+                });
+
+                tempData.forEach((value, key) => {
+                  this.historicalMap.set(key, value);
+                  this.ymap.delete(key);
+                });
+              });
+
+              // 2. 历史数据处理完后,再注册观察者
+              this.ymap.observe(({ transaction, changes }) => {
+                if (!transaction.origin || this.isProcessingHistory) return;
+                changes.keys.forEach((change, key) => {
+                  console.log(change, key);
+                  const value = this.ymap.get(key);
+                  if (!value) {
+                    console.warn(`Value for key ${key} is undefined`);
+                    return;
+                  }
+                  this.YjsHandle(this.lf, { change, key, value });
+                });
+              });
+
+              this.isProcessingHistory = false;
+            }
+          });
+
+
+
           // 当前用户
           // 设置用户的初始状态
           this.provider.awareness.setLocalStateField('user', {
             name: this.userName || this.getRandomString('User-') ,
           });
           this.userName = this.provider.awareness.getLocalState().user.name;
-          // 初始化map
-          this.ymap = this.doc.getMap('canvas')
-          // 监听 Yjs 数据的变化
-          this.ymap.observe(({ transaction, changes }) => {
-            console.log('收到Yjs数据变化', transaction, changes);
-            if (!transaction.origin) return; // 没有 origin 表示的是本地发起
-            changes.keys.forEach((change, key) => {
-              console.log(change, key);
-              // 直接调用 YjsHandle 方法
-              const value = this.ymap.get(key)
-              this.YjsHandle(this.lf, { change, key, value });
-            });
-          });
+          // // 初始化map
+          // this.ymap = this.doc.getMap('canvas')
+          // // 监听 Yjs 数据的变化
+          // this.ymap.observe(({ transaction, changes }) => {
+          //   console.log('收到Yjs数据变化', transaction, changes);
+          //   if (!transaction.origin) return; // 没有 origin 表示的是本地发起
+          //   changes.keys.forEach((change, key) => {
+          //     console.log(change, key);
+          //     // 直接调用 YjsHandle 方法
+          //     const value = this.ymap.get(key)
+          //     this.YjsHandle(this.lf, { change, key, value });
+          //   });
+          // });
         } else if (status === 'disconnected') {
           ElMessage.error('已断开与WebSocket的连接')
           this.userName = ''
