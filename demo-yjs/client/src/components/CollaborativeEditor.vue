@@ -299,6 +299,7 @@ export default {
         this.ymap.set("nodeMove", { x, y, id });
       });
     });
+    this.joinRoom()
   },
 };
 </script>
